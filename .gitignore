@@ -1,0 +1,60 @@
+# Python
+# Ignora arquivos de cache de bytecode do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignora pastas de ambientes virtuais
+env/
+venv/
+.venv/ # Caso use um nome diferente para o ambiente virtual
+lib/
+include/
+bin/
+
+# Logs do pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Django
+# O arquivo de log do Django
+*.log
+
+# Arquivos de configurações locais que podem conter informações sensíveis (ex: SECRET_KEY)
+# Se você mover SECRET_KEY para um arquivo separado (boas práticas), ignore-o aqui.
+local_settings.py
+
+# O arquivo de banco de dados SQLite (não deve ser versionado)
+db.sqlite3
+# Arquivos de journal do SQLite (temporários)
+*.sqlite3-journal
+
+# Pasta onde são armazenados arquivos de mídia enviados pelos usuários
+# Se você configurar um diretório 'media' para uploads, ele deve ser ignorado.
+media/
+
+# Arquivos estáticos coletados (geralmente não são versionados, mas gerados em produção)
+# Se você usar `collectstatic`, esta pasta será criada.
+staticfiles/
+
+# IDEs (Ambientes de Desenvolvimento Integrado)
+# Arquivos de configuração do PyCharm/IntelliJ
+.idea/
+
+# Arquivos de configuração do VS Code
+.vscode/
+
+# Arquivos de swap do Vim
+*.swp
+*.bak
+*.swo
+
+# Arquivos temporários do sistema operacional
+.DS_Store # macOS
+Thumbs.db # Windows
+
+# Outros arquivos temporários ou de backup
+*~
+*.bak
+*.tmp

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Vendas | {% block titulo %}{% endblock %}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        .container { width: 90%; margin: 20px auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .navbar { background-color: #333; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .navbar a { color: white; text-decoration: none; margin-right: 15px; }
+        .navbar a:hover { text-decoration: underline; }
+        h1, h2 { color: #0056b3; }
+        form { margin-top: 20px; }
+        form p { margin-bottom: 10px; }
+        form label { display: block; margin-bottom: 5px; font-weight: bold; }
+        form input[type="text"],
+        form input[type="email"],
+        form input[type="number"],
+        form select,
+        form textarea {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        form button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        form button:hover { background-color: #0056b3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .message { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 10px; border-radius: 4px; margin-bottom: 15px; }
+        ul.errorlist { color: red; list-style-type: none; padding: 0; margin: 0;}
+        ul.errorlist li { margin-bottom: 5px; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="navbar">
+        <div>
+            <a href="{% url 'dashboard' %}">Dashboard</a>
+            <a href="{% url 'cadastrar_vendedor' %}">Novo Vendedor</a>
+            <a href="{% url 'cadastrar_produto' %}">Novo Produto</a>
+            <a href="{% url 'cadastrar_cliente' %}">Novo Cliente</a>
+            <a href="{% url 'registrar_venda' %}">Registrar Venda</a>
+        </div>
+        <div>
+            <a href="{% url 'admin:index' %}">Admin</a>
+        </div>
+    </div>
+    <div class="container">
+        <h1>{% block titulo_pagina %}{% endblock %}</h1>
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

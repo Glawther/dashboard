@@ -1,0 +1,158 @@
+{% extends 'vendas/base.html' %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block titulo_pagina %}{{ titulo }}{% endblock %}
+
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .metric-card {
+            background-color: #e9f5ff;
+            border-left: 5px solid #007bff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .metric-card h3 {
+            margin-top: 0;
+            color: #0056b3;
+        }
+        .metric-card p {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        .table-section {
+            margin-top: 30px;
+        }
+        #mapid { height: 400px; width: 100%; margin-top: 20px; border: 1px solid #ddd; border-radius: 8px;}
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="dashboard-grid">
+        <div class="metric-card">
+            <h3>Vendas Hoje</h3>
+            <p>R$ {{ total_vendas_hoje|floatformat:2 }}</p>
+        </div>
+        <div class="metric-card">
+            <h3>Vendas Semana</h3>
+            <p>R$ {{ total_vendas_semana|floatformat:2 }}</p>
+        </div>
+        <div class="metric-card">
+            <h3>Vendas Mês</h3>
+            <p>R$ {{ total_vendas_mes|floatformat:2 }}</p>
+        </div>
+        <div class="metric-card">
+            <h3>Total Geral de Vendas</h3>
+            <p>R$ {{ total_geral_vendas|floatformat:2 }}</p>
+        </div>
+        <div class="metric-card">
+            <h3>Taxa de Conversão (Visitas x Vendas)</h3>
+            <p>{{ conversao }}</p>
+        </div>
+    </div>
+
+    <div class="table-section">
+        <h2>Ranking dos Melhores Vendedores</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Posição</th>
+                    <th>Vendedor</th>
+                    <th>Total de Vendas</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vendedor in ranking_vendedores %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ vendedor.nome }}</td>
+                    <td>R$ {{ vendedor.total_vendas|floatformat:2 }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">Nenhum vendedor com vendas registradas.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-section">
+        <h2>Ticket Médio por Vendedor</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Vendedor</th>
+                    <th>Ticket Médio</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vendedor in ticket_medio_vendedores %}
+                <tr>
+                    <td>{{ vendedor.nome }}</td>
+                    <td>R$ {{ vendedor.ticket_medio|floatformat:2|default:"0.00" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2">Nenhum vendedor com ticket médio calculado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="table-section">
+        <h2>Mapa de Calor por Região (Geolocalização)</h2>
+        <div id="mapid"></div>
+    </div>
+
+    <script>
+        // Inicializa o mapa Leaflet
+        var map = L.map('mapid').setView([-2.5303, -44.3068], 13); // Coordenadas de São Luís, MA, Brasil
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Busca os dados de geolocalização das vendas
+        fetch('{% url "mapa_calor_data" %}')
+            .then(response => response.json())
+            .then(data => {
+                var heatData = [];
+                data.forEach(item => {
+                    // Leaflet.heat espera [latitude, longitude, intensidade]
+                    heatData.push([item.lat, item.lng, item.value]); 
+                });
+
+                if (heatData.length > 0) {
+                    var heat = L.heatLayer(heatData, {
+                        radius: 25, // Tamanho dos pontos de calor
+                        blur: 15,   // Intensidade do borrão
+                        maxZoom: 17, // Zoom máximo para exibir o calor
+                        max: 1.0,    // Valor máximo da intensidade (normalização)
+                    }).addTo(map);
+
+                    // Ajusta o zoom do mapa para os pontos de calor
+                    var latlngs = heatData.map(item => [item[0], item[1]]);
+                    if (latlngs.length > 0) {
+                        map.fitBounds(L.latLngBounds(latlngs));
+                    }
+                } else {
+                    console.log("Nenhum dado de geolocalização encontrado para o mapa de calor.");
+                }
+            })
+            .catch(error => console.error('Erro ao buscar dados do mapa de calor:', error));
+    </script>
+{% endblock %}

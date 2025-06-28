@@ -1,0 +1,51 @@
+{% extends 'vendas/base.html' %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block titulo_pagina %}{{ titulo }}{% endblock %}
+
+{% block content %}
+    <form method="post" id="vendaForm">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Registrar Venda</button>
+    </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const latitudeInput = document.getElementById('id_latitude');
+            const longitudeInput = document.getElementById('id_longitude');
+
+            // Função para obter a geolocalização
+            function getGeolocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            latitudeInput.value = position.coords.latitude.toFixed(6);
+                            longitudeInput.value = position.coords.longitude.toFixed(6);
+                            console.log('Localização obtida:', position.coords.latitude, position.coords.longitude);
+                        },
+                        (error) => {
+                            console.error('Erro ao obter localização:', error.message);
+                            // Opcional: Avisar o usuário que a localização não pôde ser obtida
+                            alert('Não foi possível obter sua localização. Por favor, permita o acesso à geolocalização ou insira manualmente se houver um campo.');
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 5000,
+                            maximumAge: 0
+                        }
+                    );
+                } else {
+                    console.log('Geolocalização não é suportada por este navegador.');
+                    alert('Seu navegador não suporta geolocalização.');
+                }
+            }
+
+            // Tenta obter a localização assim que a página carrega
+            getGeolocation();
+
+            // Você pode adicionar um botão para re-obter a localização se quiser
+            // Ex: <button type="button" onclick="getGeolocation()">Obter Localização</button>
+        });
+    </script>
+{% endblock %}

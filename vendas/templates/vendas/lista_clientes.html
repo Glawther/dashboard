@@ -1,0 +1,34 @@
+{% extends 'vendas/base.html' %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block titulo_pagina %}{{ titulo }}{% endblock %}
+
+{% block content %}
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Contato</th>
+                <th>Telefone</th>
+                <th>Endereço</th>
+                <th>Data da Visita</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in clientes %}
+            <tr>
+                <td>{{ cliente.nome }}</td>
+                <td>{{ cliente.contato|default:"N/A" }}</td>
+                <td>{{ cliente.telefone|default:"N/A" }}</td>
+                <td>{{ cliente.endereco|default:"N/A" }}</td>
+                <td>{{ cliente.data_visita|date:"d/m/Y H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">Nenhum cliente visitado cadastrado ainda.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><a href="{% url 'cadastrar_cliente' %}">Cadastrar Novo Cliente Visitado</a></p>
+{% endblock %}

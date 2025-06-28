@@ -1,0 +1,32 @@
+{% extends 'vendas/base.html' %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block titulo_pagina %}{{ titulo }}{% endblock %}
+
+{% block content %}
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Valor</th>
+                <th>Cadastro em</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in produtos %}
+            <tr>
+                <td>{{ produto.nome }}</td>
+                <td>{{ produto.descricao|default:"Sem descrição" }}</td>
+                <td>R$ {{ produto.valor|floatformat:2 }}</td>
+                <td>{{ produto.data_cadastro|date:"d/m/Y H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">Nenhum produto cadastrado ainda.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><a href="{% url 'cadastrar_produto' %}">Cadastrar Novo Produto</a></p>
+{% endblock %}

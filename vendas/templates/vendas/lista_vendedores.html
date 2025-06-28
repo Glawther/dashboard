@@ -1,0 +1,32 @@
+{% extends 'vendas/base.html' %}
+
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block titulo_pagina %}{{ titulo }}{% endblock %}
+
+{% block content %}
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Contratado em</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for vendedor in vendedores %}
+            <tr>
+                <td>{{ vendedor.nome }}</td>
+                <td>{{ vendedor.email }}</td>
+                <td>{{ vendedor.telefone|default:"N/A" }}</td>
+                <td>{{ vendedor.data_contratacao|date:"d/m/Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">Nenhum vendedor cadastrado ainda.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><a href="{% url 'cadastrar_vendedor' %}">Cadastrar Novo Vendedor</a></p>
+{% endblock %}
